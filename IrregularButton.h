@@ -54,6 +54,7 @@ class IrregularButton : public cocos2d::ui::Button
                 const std::string& disableImage = "",
                 cocos2d::ui::Widget::TextureResType texType = cocos2d::ui::Widget::TextureResType::LOCAL) override;
         void loadNormalTransparentInfo();
+        void loadNormalTransparentInfoFromFile();
         bool getIsTransparentAtPoint(cocos2d::Vec2 point);
 
         /* ====================  DATA MEMBERS  ======================================= */
