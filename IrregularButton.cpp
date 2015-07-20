@@ -83,25 +83,25 @@ bool IrregularButton::init()
 
 void IrregularButton::loadNormalTransparentInfoFromFile()
 {
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     auto start = std::chrono::steady_clock::now();
 #endif
     
     Image* normalImage = new Image();
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     auto stepStart = std::chrono::steady_clock::now();
 #endif
     normalImage->initWithImageFile(_normalFileName);
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     auto stepEnd = std::chrono::steady_clock::now();
     auto stepTime = std::chrono::duration_cast<std::chrono::milliseconds>(stepEnd - stepStart);
-    printf("Image::initWithImageFile: %lld ms\n", stepTime.count());
+    CCLOG("Image::initWithImageFile: %lld ms\n", stepTime.count());
 #endif
     
     normalImageWidth_ = normalImage->getWidth();
     normalImageHeight_ = normalImage->getHeight();
 
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     stepStart = std::chrono::steady_clock::now();
 #endif
     auto dataLen = normalImage->getDataLen();
@@ -115,43 +115,43 @@ void IrregularButton::loadNormalTransparentInfoFromFile()
             normalTransparent_[i * normalImageWidth_ + j] = (normalPixels[(i * normalImageWidth_ + j) * 4] == 0);
         }
     }
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     stepEnd = std::chrono::steady_clock::now();
     stepTime = std::chrono::duration_cast<std::chrono::milliseconds>(stepEnd - stepStart);
-    printf("init normalTransparent_: %lld ms\n", stepTime.count());
+    CCLOG("init normalTransparent_: %lld ms\n", stepTime.count());
 #endif
 
     delete normalImage;
     
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     auto end = std::chrono::steady_clock::now();
     auto totalTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    printf("load from file: %lld ms\n", totalTime.count());
+    CCLOG("load from file: %lld ms\n", totalTime.count());
 #endif
 }
 
 void IrregularButton::loadNormalTransparentInfo()
 {
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     auto start = std::chrono::steady_clock::now();
 #endif
     
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     auto stepStart = std::chrono::steady_clock::now();
 #endif
     Sprite* normalRenderer = static_cast<Sprite*>(_buttonNormalRenderer);
     auto normalTexture = normalRenderer->getTexture();
     const Size& s = normalTexture->getContentSizeInPixels();
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     auto stepEnd = std::chrono::steady_clock::now();
     auto stepTime = std::chrono::duration_cast<std::chrono::milliseconds>(stepEnd - stepStart);
-    printf("Sprite::getTexture: %lld ms\n", stepTime.count());
+    CCLOG("Sprite::getTexture: %lld ms\n", stepTime.count());
 #endif
     
     int savedBufferWidth = (int)s.width;
     int savedBufferHeight = (int)s.height;
-#ifdef DEBUG
-    printf("image: %s, savedBuffWidth: %d, savedBuffHeight: %d\n", _normalFileName.c_str(), savedBufferWidth, savedBufferHeight);
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
+    CCLOG("image: %s, savedBuffWidth: %d, savedBuffHeight: %d\n", _normalFileName.c_str(), savedBufferWidth, savedBufferHeight);
 #endif
     
     GLubyte *buffer = nullptr;
@@ -159,43 +159,43 @@ void IrregularButton::loadNormalTransparentInfo()
     // the FBO which cocos2dx used is not window-system-provided (non-zero id)
     GLint oldFBO;
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
-#ifdef DEBUG
-    printf("oldFBO: %d\n", oldFBO);
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
+    CCLOG("oldFBO: %d\n", oldFBO);
 #endif
     
     GLuint framebuffer;
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
     
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     stepStart = std::chrono::steady_clock::now();
 #endif
     glBindTexture(GL_TEXTURE_2D, normalTexture->getName());
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, savedBufferWidth, savedBufferHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, normalTexture->getName(), 0);
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     stepEnd = std::chrono::steady_clock::now();
     stepTime = std::chrono::duration_cast<std::chrono::milliseconds>(stepEnd - stepStart);
-    printf("bind texture: %lld ms\n", stepTime.count());
+    CCLOG("bind texture: %lld ms\n", stepTime.count());
 #endif
     
     CCASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Could not attach texture to framebuffer");
     
     buffer = new (std::nothrow) GLubyte[savedBufferWidth * savedBufferHeight * 4];
     
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     stepStart = std::chrono::steady_clock::now();
 #endif
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glReadPixels(0, 0, savedBufferWidth, savedBufferHeight, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
     glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     stepEnd = std::chrono::steady_clock::now();
     stepTime = std::chrono::duration_cast<std::chrono::milliseconds>(stepEnd - stepStart);
-    printf("glReadPixels: %lld ms\n", stepTime.count());
+    CCLOG("glReadPixels: %lld ms\n", stepTime.count());
 #endif
     
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     stepStart = std::chrono::steady_clock::now();
 #endif
     auto dataLen = savedBufferWidth * savedBufferHeight * 4;
@@ -210,18 +210,18 @@ void IrregularButton::loadNormalTransparentInfo()
             normalTransparent_[i * normalImageWidth_ + j] = (buffer[(i * normalImageWidth_ + j) * 4] == 0);
         }
     }
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     stepEnd = std::chrono::steady_clock::now();
     stepTime = std::chrono::duration_cast<std::chrono::milliseconds>(stepEnd - stepStart);
-    printf("init normalTransparent_: %lld ms\n", stepTime.count());
+    CCLOG("init normalTransparent_: %lld ms\n", stepTime.count());
 #endif
     
     CC_SAFE_DELETE_ARRAY(buffer);
     
-#ifdef DEBUG
+#if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
     auto end = std::chrono::steady_clock::now();
     auto totalTime = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    printf("load from memory: %lld ms\n", totalTime.count());
+    CCLOG("load from memory: %lld ms\n", totalTime.count());
 #endif
 }
 
