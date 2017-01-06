@@ -112,7 +112,7 @@ void IrregularButton::loadNormalTransparentInfoFromFile()
     normalTransparent_ = new bool[dataLen / (sizeof(unsigned char) * 4)];
     for (auto i = 0; i < normalImageHeight_; i++) {
         for (auto j = 0; j < normalImageWidth_; j++) {
-            normalTransparent_[i * normalImageWidth_ + j] = (normalPixels[(i * normalImageWidth_ + j) * 4] == 0);
+            normalTransparent_[i * normalImageWidth_ + j] = (normalPixels[(i * normalImageWidth_ + j) * 4 + 3] == 0);
         }
     }
 #if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
@@ -207,7 +207,7 @@ void IrregularButton::loadNormalTransparentInfo()
     normalTransparent_ = new bool[dataLen / (sizeof(unsigned char) * 4)];
     for (auto i = 0; i < normalImageHeight_; i++) {
         for (auto j = 0; j < normalImageWidth_; j++) {
-            normalTransparent_[i * normalImageWidth_ + j] = (buffer[(i * normalImageWidth_ + j) * 4] == 0);
+            normalTransparent_[i * normalImageWidth_ + j] = (buffer[(i * normalImageWidth_ + j) * 4 + 3] == 0);
         }
     }
 #if defined(COCOS2D_DEBUG) && (COCOS2D_DEBUG > 0)
